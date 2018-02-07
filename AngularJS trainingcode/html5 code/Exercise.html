@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web Worker Demo</title>
+<meta charset="utf-8"/>
+
+</head>
+<body>
+<h3>Example for Web Workers</h3>
+<form>
+  <label>Input number of dollar Units</label>
+  <input type="number" id="noOfUnit"/>
+  <button id="btn">Get Rupees Value</button>
+  </form>
+<div id="support"></div>
+<p></p>
+<div id="divInfo"></div>
+</body>
+<script>
+  var myworker;
+  document.getElementById('btn').addEventListener('click',init);
+  function init(ev)
+  {
+    ev.preventDefault();
+    if(typeof(Worker) != "undefined")
+    {
+      var numOFUnit = document.getElementById("noOfUnit").value;
+      myworker = new Worker("exchangeCur.js");
+      myworker.addEventListener("message",workerMsg,true);
+      myworker.postMessage(numOFUnit);
+      //document.getElementById("divInfo").innerHTML = "Main : Hello !";
+      
+    }
+    else
+    {
+      document.getElementById("support").innerHTML = "Oops! This browser does not support Web Workers";
+    }
+  }
+
+ function workerMsg(e)
+ {
+   document.getElementById("divInfo").innerHTML = "<br/>" + e.data; 
+
+   window.localStorage.setItem(document.getElementById("noOfUnit").value, e.data);
+   if( window.localStorage.length >= 2) {
+   
+    window.localStorage.removeItem(window.localStorage.key(2));
+    console.log(localStorage.key(2));
+   }
+ }
+
+</script>
+</html>
